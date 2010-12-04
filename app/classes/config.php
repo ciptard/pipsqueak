@@ -19,35 +19,13 @@ class Config {
             self::$items = $app_config;
         }
     }   
-   
+    
+    
     public static function get( $item, $default = NULL )
     {
-        if (isset(static::$items[$item]))
+        if ( isset(static::$items[$item]) )
 		{
 			return static::$items[$item];
-		}
-
-		if (strpos($item, '.') !== false)
-		{
-			$parts = explode('.', $item);
-
-			$return = false;
-			foreach ($parts as $part)
-			{
-				if ($return === false and isset(static::$items[$part]))
-				{
-					$return = static::$items[$part];
-				}
-				elseif (isset($return[$part]))
-				{
-					$return = $return[$part];
-				}
-				else
-				{
-					return $default;
-				}
-			}
-			return $return;
 		}
 
 		return $default;
