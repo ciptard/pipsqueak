@@ -21,6 +21,11 @@ $templates_path = './templates';
 $content_path = './content';
 
 /**
+* Path to the public files directory.
+*/
+$public_path = './public';
+
+/**
 * Root path
 */
 define('DOCROOT', realpath(__DIR__).DIRECTORY_SEPARATOR);

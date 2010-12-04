@@ -1,5 +1,5 @@
 
-template: master
+template: master.html
 
 title: Pipsqueak is up and running!
 

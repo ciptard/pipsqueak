@@ -7,6 +7,7 @@ define('APPPATH', DOCROOT.$app_path.DS);
 define('CACHEPATH', DOCROOT.$cache_path.DS);
 define('TEMPLATESPATH', DOCROOT.$templates_path.DS);
 define('CONTENTPATH', DOCROOT.$content_path.DS);
+define('PUBLICPATH', DOCROOT.$public_path.DS);
 define('PAGESPATH', CONTENTPATH.'pages'.DS);
 define('RESOURCESPATH', CONTENTPATH.'resources'.DS);
 define('GLOBALSPATH', CONTENTPATH.'global.txt');
@@ -31,7 +32,7 @@ $request = new Request();
 
 $request->execute();
 
-echo $request->response;
+$request->response();
 
 Pipsqueak::finish();
 

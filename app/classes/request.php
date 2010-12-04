@@ -27,6 +27,18 @@ class Request {
     
     public function execute()
     {
+        try
+        {
+            $this->render();
+        }
+        catch( Exception $e )
+        {
+            $this->show_404();
+        }
+    }
+    
+    protected function render()
+    {
         $page_cache_exists = Cache::exists($this->uri, 'site');
         
         if ( $this->cache_level === Cache::FULL and $page_cache_exists )
@@ -52,8 +64,7 @@ class Request {
         else
         {
             // can't find anything, throw a 404 error.
-            $this->show_404();
-            return;
+            throw new Exception('404');
         }
   
         $content_cache_is_valid  = Cache::is_valid($this->uri, 'content', $this->content_path);
@@ -88,78 +99,93 @@ class Request {
         else
         {
             // otherwise lets parse the content afresh...
-            try
-            {
-                $this->content = Content::parse( $this->content_path );
-                if ( $this->cache_level > Cache::NONE ) Cache::save($this->uri, 'content', $this->content);
-            }
-            catch( Exception $e)
-            {
-                $this->show_404();
-                return;
-            }
+            $this->content = Content::parse( $this->content_path );
+            if ( $this->cache_level > Cache::NONE ) Cache::save($this->uri, 'content', $this->content);
         }
                 
-        if ( isset($this->content['template']) )
-        {   
-            $this->content['template'] = str_replace('.html','',$this->content['template']).'.html';
+        if ( isset($this->content['template']) && file_exists( TEMPLATESPATH.$this->content['template'] ) )
+        {
+            $this->template_path = $this->content['template'];
             
-            if ( file_exists( TEMPLATESPATH.$this->content['template'] ) )
-            {
-                $this->template_path = $this->content['template'];
-                
-                // template exists, so lets get the global configs, if there are any
-                
-                $globals_file_exists = file_exists(GLOBALSPATH);
-   
-                if ( $this->cache_level > Cache::NONE and Cache::exists('_globals','content') )
-                {                
-                    if ( $this->cache_level === Cache::FULL or ( $this->cache_level === Cache::DYNAMIC and $globals_cache_is_valid ) )
-                    {
-                        // we have a valid cache of the globals file.
-                        $this->globals = Cache::retrieve('_globals','content');
-                    }
-                    elseif ( $this->cache_level === Cache::DYNAMIC and $globals_file_exists )
-                    {
-                        // globals file cache is invalid
-                        $this->globals = Content::parse( GLOBALSPATH );
-                        if ( $this->cache_level > Cache::NONE ) Cache::save('_globals', 'content', $this->globals);
-                    }
-                }
-                elseif ( $globals_file_exists )
+            // template exists, so lets get the global configs, if there are any
+            
+            $globals_file_exists = file_exists(GLOBALSPATH);
+
+            if ( $this->cache_level > Cache::NONE and Cache::exists('_globals','content') )
+            {                
+                if ( $this->cache_level === Cache::FULL or ( $this->cache_level === Cache::DYNAMIC and $globals_cache_is_valid ) )
                 {
-                    // no cache exists
+                    // we have a valid cache of the globals file.
+                    $this->globals = Cache::retrieve('_globals','content');
+                }
+                elseif ( $this->cache_level === Cache::DYNAMIC and $globals_file_exists )
+                {
+                    // globals file cache is invalid
                     $this->globals = Content::parse( GLOBALSPATH );
                     if ( $this->cache_level > Cache::NONE ) Cache::save('_globals', 'content', $this->globals);
                 }
-
-                // we now have a content file path and a template file path... can render the template
-
-                $template = Template::factory();
-                 
-                $this->response = $template->render($this->template_path, array_merge($this->content,array('global'=>$this->globals)));
-
-                if ( $this->cache_level > Cache::NONE ) Cache::save($this->uri, 'site', $this->response);
-                return;
+            }
+            elseif ( $globals_file_exists )
+            {
+                // no cache exists
+                $this->globals = Content::parse( GLOBALSPATH );
+                if ( $this->cache_level > Cache::NONE ) Cache::save('_globals', 'content', $this->globals);
             }
 
+            // we now have a content file path and a template file path... can render the template
+
+            $template = Template::factory();
+             
+            $this->response = $template->render($this->template_path, array_merge($this->content,array('global'=>$this->globals)));
+
+            if ( $this->cache_level > Cache::NONE ) Cache::save($this->uri, 'site', $this->response);
+            return;
         }
                 
         // TODO: handle lack of template a bit more gently, have some sensible defaults to fall back to.
-         
-        $this->show_404();
-        return;
+        
+        throw new Exception('404');
     }
     
-    private function send_response()
+    public function response()
     {
         echo $this->response;
     }
         
     private function show_404()
     {
-        // TODO: need to come up with a strategy for determining which page to display for 404 errors
-        echo '404!';
+        header('HTTP/1.0 404 Not Found');
+        
+        // if there is a 404 content page, display that. 404 pages are not cached.
+        $uri = new URI('404');
+
+        if ( Page::path($uri) )
+        {
+            try
+            {
+                $content = Content::parse( Page::path($uri) );
+                if ( isset($content['template']) && file_exists( TEMPLATESPATH.$content['template'] ) )
+                {
+                    $template = Template::factory();
+                    echo $template->render($content['template'], array_merge($content,array('global'=>$this->globals)));
+                    exit();
+                }
+            }
+            catch( Exception $e )
+            {
+                // ...
+            }
+        }
+        
+        if ( file_exists(PUBLICPATH.'404.html') )
+        {
+            include(PUBLICPATH.'404.html');
+        }
+        else
+        {
+            echo '<h1>404 Error</h1><p>The page you were looking for could not be found.</p>';            
+        }
+                
         exit();
     }
             

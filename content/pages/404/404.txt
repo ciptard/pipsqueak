@@ -1,2 +1,2 @@
-template: master
+template: master.html
 title: 404 - Page not found

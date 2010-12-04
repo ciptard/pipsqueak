@@ -15,7 +15,7 @@ class Template {
 		    require_once( APPPATH.'vendor/Twig/Autoloader.php' );
             Twig_Autoloader::register();
 
-            self::$loader = new Template_loader(array(TEMPLATESPATH));
+            self::$loader = new Twig_Loader_Filesystem(array(TEMPLATESPATH));
             
 			static::$instance = new Template();
 		}

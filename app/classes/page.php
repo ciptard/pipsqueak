@@ -22,6 +22,11 @@ class Page {
     {         
         $segments = $uri->segments();
         $path = PAGESPATH;
+ 
+        if ( $segments[0] == '404' )
+        {
+            return PAGESPATH.'404/404.'.Config::get('content_extension');
+        }
 
         if ( ! count($uri->segments()) )
         {
@@ -33,7 +38,7 @@ class Page {
             $path .= '[1-9]*-'.$segment.DS;
         }
         
-        $page_name = $uri->last_segment() ? $uri->last_segment() : Config::get('homepage_slug'); 
+        $page_name = $uri->last_segment() ? $uri->last_segment() : Config::get('homepage_slug');
 
         $path .= $page_name.'.'.Config::get('content_extension');
             
