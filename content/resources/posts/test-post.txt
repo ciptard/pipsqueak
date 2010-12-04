@@ -1,0 +1,8 @@
+
+template: master
+
+title: A test Post
+
+++++++
+
+This is a test post. Hello!

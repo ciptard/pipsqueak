@@ -1,0 +1,2 @@
+template: master
+title: 404 - Page not found

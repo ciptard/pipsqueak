@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="utf-8">
+	
+	<style>
+	
+	* {
+		margin: 0;
+		padding: 0;
+	}
+	
+	body {
+		background: #DDD;
+		color: #333;
+		font-family: Georgia, serif;
+	}
+	
+	article {
+		display: block;
+		background: #FFF;
+		padding: 20px 20px 20px 20px;
+		width: 460px;
+		margin: 100px auto 0 auto;
+		-moz-box-shadow: 1px 1px 1px #999;
+	}
+	
+	h1 {
+		font-size: 16px;
+		margin-bottom: 14px;
+		font-weight: bold;
+	}
+	
+	h2 {
+		font-size: 13px;
+		margin: 16px 0 10px 0;
+		font-weight: bold;
+	}
+	
+	p {
+		font-size: 13px;
+		line-height: 1.4;
+		margin: 12px 0;
+	}
+	
+	li {
+		font-size: 13px;
+		line-height: 1.4;
+		list-style: none;
+	}
+	
+	p.credits {
+		font-size: 11px;
+		color: #777;
+		text-align: center;
+	}
+	
+	a {
+		color: #777;
+	}
+	
+	</style>
+
+	<title>{{ global.title }}</title>
+</head>
+<body>
+	
+	<article>
+		
+		<h1>{{ title }}</h1>
+
+		{{ content }}
+		
+	</article>
+	
+	<p class="credits">Powered by <a href="http://pipsqueak.allmarkedup.com/">Pipsqueak</a>.</p>
+	
+</body>
+</html>
