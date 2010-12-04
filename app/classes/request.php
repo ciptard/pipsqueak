@@ -15,9 +15,7 @@ class Request {
     public $globals = array();
     
     public $template;
-    
-    private $twig;
-    
+        
     public function __construct()
     {        
         $this->uri = new URI();
