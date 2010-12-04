@@ -9,7 +9,7 @@ define('TEMPLATESPATH', DOCROOT.$templates_path.DS);
 define('CONTENTPATH', DOCROOT.$content_path.DS);
 define('PAGESPATH', CONTENTPATH.'pages'.DS);
 define('RESOURCESPATH', CONTENTPATH.'resources'.DS);
-define('GLOBALSPATH', CONTENTPATH.'global.yml');
+define('GLOBALSPATH', CONTENTPATH.'global.txt');
 
 // Deal with autoloading...
 function autoload( $class )
