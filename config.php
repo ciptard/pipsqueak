@@ -2,8 +2,8 @@
 
 return array(
     
-    // you can override any core config settings here, if necessary - i.e. caching level
+    'cache_level'   => Cache::DYNAMIC, // can be Cache::NONE, Cache::DYNAMIC, Cache::FULL
     
-    // 'cache_level' => Cache::NONE
+    'index_file'    => 'index.php'
     
 );

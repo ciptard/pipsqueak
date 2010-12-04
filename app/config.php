@@ -6,6 +6,8 @@ return array(
     'debug'                 => FALSE,
     'cache_level'           => Cache::DYNAMIC,
     
+    'index_file'            => 'index.php',
+    
     'homepage_slug'         => 'home',
     'content_extension'     => 'txt',
 

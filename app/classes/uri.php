@@ -6,11 +6,13 @@ class URI {
 
 	public $segments = '';
 	
+	public static $uri_prefix;
+	
 	public function __construct($uri = NULL)
 	{
 		if ($uri === NULL)
 		{
-			$uri = static::detect();
+			$uri = $this->detect();
 		}
 		
 		$this->uri = trim($uri, '/');
@@ -47,25 +49,34 @@ class URI {
 	    return $this->uri;
 	}
 	
-	public static function detect()
+	public function detect()
 	{
-		if ( ! empty($_SERVER['PATH_INFO']))
-		{
-			$uri = $_SERVER['PATH_INFO'];
-		}
-		else
-		{
-			if (isset($_SERVER['REQUEST_URI']))
-			{
-				$uri = $_SERVER['REQUEST_URI'];
-			}
-			else
-			{
-				throw new Exception('Unable to detect the URI.');
-			}
-		}
-
-		$uri = str_replace(array('//', '../'), '/', $uri);
+	    $index_file = Config::get('index_file');
+	    
+	    self::$uri_prefix = empty($index_file) ? $index_file : '';
+	    
+        if ( ! empty($_SERVER['PATH_INFO']) )
+        {
+            $uri = $_SERVER['PATH_INFO']; // use it if we got it...
+        }
+        else
+        {
+            if ( isset($_SERVER['REQUEST_URI']) )
+            {
+                $uri = $_SERVER['REQUEST_URI'];
+                
+                if ( ! empty($index_file) )
+                {
+                   $uri = str_replace( $index_file, '', $uri );
+                }
+                
+                list($uri) = explode('?',$uri);
+            }
+            else
+            {
+                throw new Exception('The URI cannot be detected.');
+            }
+        }
 
 		return $uri;
 	}
