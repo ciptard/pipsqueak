@@ -23,7 +23,7 @@ class Page {
         $segments = $uri->segments();
         $path = PAGESPATH;
  
-        if ( $segments[0] == '404' )
+        if ( isset($segments[0]) and $segments[0] === '404' )
         {
             return PAGESPATH.'404/404.'.Config::get('content_extension');
         }

@@ -18,7 +18,7 @@ function autoload( $class )
     list($namespace) = explode('_', $class);
     if ( ! isset($namespace) or $namespace !== 'Twig' )
     {
-        include_once APPPATH.'classes/'.strtolower($class).'.php';  
+        include_once APPPATH.'classes'.DS.str_replace('_',DS,strtolower($class)).'.php';  
     } 
 }
 
@@ -28,7 +28,7 @@ spl_autoload_register('autoload', true, true );
 
 Pipsqueak::start();
 
-$request = new Request();
+$request = Request::factory(Config::get('cache_level'));
 
 $request->execute();
 

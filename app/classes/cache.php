@@ -36,16 +36,21 @@ class Cache {
         if ( self::exists( $uri, $type ) )
         {
             $cache_mtime = filemtime( self::cache_path( $uri, $type ) );
-            $file_mtime = is_int($compare) ? $compare : filemtime( $compare );
-            return $cache_mtime > $file_mtime;
+            
+            if ( is_int($compare) )
+            {
+                return $cache_mtime > $compare;
+            }
+            elseif ( is_dir($compare) )
+            {
+                return ! Helpers::newer_file_exists( $compare, $cache_mtime );
+            }
+            elseif ( file_exists($compare) )
+            {
+                return $cache_mtime > filemtime( $compare );
+            }
         }
         return FALSE;
-    }
-    
-    public static function template_cache_mtime()
-    {
-        $dirmtime = Helpers::dirmtime( TEMPLATESPATH, TRUE );
-        return  $dirmtime ? $dirmtime : 356137200;
     }
     
     private static function cache_path( $uri, $type )
