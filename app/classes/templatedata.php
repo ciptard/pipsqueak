@@ -2,20 +2,19 @@
 
 class TemplateData {
     
+    protected static $pages = NULL;
+    
     public function pages()
     {
-        $iterator = new RecursiveIteratorIterator(
-                        new RecursiveDirectoryIterator(PAGESPATH),
-                        RecursiveIteratorIterator::SELF_FIRST);
-                        
-        foreach($iterator as $fileObject) {
-            if( $fileObject->isDir() ) {
-                $files[] = str_replace(PAGESPATH, '', $fileObject->getPathname());
-            }
+        if ( ! self::$pages ) 
+        {
+            self::$pages = new TemplateData_PagesIterator();
         }
         
-        return $files;
+        return self::$pages;
     }
+    
+
 
 }
 
