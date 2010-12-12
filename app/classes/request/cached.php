@@ -13,18 +13,9 @@ class Request_Cached extends Request {
         
         // otherwise...
         
-        $this->get_content_path();
-        
-        if ( Cache::exists($this->uri, 'content') )
-        {
-            $this->content = Cache::retrieve($this->uri, 'content');
-        }
-        else
-        {
-            $this->parse_content();
-        }
-        
-        $this->get_template();
+        $this->get_item();
+
+        $this->get_content();
         
         if ( Cache::exists('_globals','content') )
         {
@@ -36,10 +27,8 @@ class Request_Cached extends Request {
         }
         
         $this->render_template();
-        
     }
 
-            
 }
 
 /* End of file classes/request/cached.php */

@@ -3,11 +3,11 @@
 define('DS', DIRECTORY_SEPARATOR);
 
 // Define the global path constants
-define('APPPATH', DOCROOT.$app_path.DS);
-define('CACHEPATH', DOCROOT.$cache_path.DS);
-define('TEMPLATESPATH', DOCROOT.$templates_path.DS);
-define('CONTENTPATH', DOCROOT.$content_path.DS);
-define('PUBLICPATH', DOCROOT.$public_path.DS);
+define('APPPATH', realpath(DOCROOT.$app_path).DS);
+define('CACHEPATH', realpath(DOCROOT.$cache_path).DS);
+define('TEMPLATESPATH', realpath(DOCROOT.$templates_path).DS);
+define('CONTENTPATH', realpath(DOCROOT.$content_path).DS);
+define('PUBLICPATH', realpath(DOCROOT.$public_path).DS);
 define('PAGESPATH', CONTENTPATH.'pages'.DS);
 define('RESOURCESPATH', CONTENTPATH.'resources'.DS);
 define('GLOBALSPATH', CONTENTPATH.'global.txt');

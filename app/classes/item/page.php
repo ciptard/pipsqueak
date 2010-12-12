@@ -1,9 +1,7 @@
 <?php defined('APPPATH') or exit('No direct script access allowed');
 
 
-class Page {
-    
-    private static $paths = array();
+class Item_Page extends Item {
         
     public static function path( $uri )
     {

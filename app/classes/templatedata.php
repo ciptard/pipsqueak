@@ -4,6 +4,8 @@ class TemplateData {
     
     protected static $pages = NULL;
     
+    protected static $resources = array();
+    
     public function pages()
     {
         if ( ! self::$pages ) 
@@ -14,7 +16,26 @@ class TemplateData {
         return self::$pages;
     }
     
-
+    public function __call($name, $arguments)
+    {
+        if ( ! isset( $this->resources[$name] ) )
+        {
+            if ( is_dir( RESOURCESPATH.$name ) )
+            {
+                $this->resources[$name] = new TemplateData_ResourcesIterator(RESOURCESPATH.$name);
+                foreach( $this->resources[$name] as $res )
+                {
+                    echo "<pre>";
+                    print_r($res);
+                    echo "</pre>";
+                }
+            }
+        }
+        if ( isset($this->resources[$name] ) )
+        {
+            return $this->resources[$name];
+        }
+    }
 
 }
 

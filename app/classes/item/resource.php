@@ -1,10 +1,8 @@
 <?php defined('APPPATH') or exit('No direct script access allowed');
 
 
-class Resource {
+class Item_Resource extends Item {
     
-    private static $paths = array();
-
     public static function path( $uri )
     {
         $hashkey = md5($uri->string());

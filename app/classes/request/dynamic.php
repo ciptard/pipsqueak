@@ -4,7 +4,7 @@ class Request_Dynamic extends Request {
    
     protected function render()
     {
-        $this->get_content_path();
+        $this->get_item();
         
         $content_cache_is_valid  = Cache::is_valid($this->uri, 'content', $this->content_path);
         $template_cache_is_valid = Cache::is_valid($this->uri, 'site', TEMPLATESPATH);
@@ -22,18 +22,7 @@ class Request_Dynamic extends Request {
             return;
         }
 
-        if ( $content_cache_is_valid )
-        {
-            // the cached content file is still valid so lets use that.
-            $this->content = Cache::retrieve($this->uri, 'content');
-        }
-        else
-        {
-            // otherwise lets parse the content afresh...
-            $this->parse_content();
-        }
-        
-        $this->get_template();
+        $this->get_content();
         
         if ( $globals_cache_is_valid )
         {

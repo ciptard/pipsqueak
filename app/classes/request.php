@@ -60,60 +60,56 @@ abstract class Request {
     
     protected abstract function render();
     
-    protected function get_content_path()
+    protected function get_item()
     {
-        if ( Page::path($this->uri) )
-        {
-            $this->content_path = Page::path($this->uri); // this is a request for a specific page.
-            $this->content_type = 'page';
-        }
-        elseif ( Resource::path($this->uri) )
-        {
-            $this->content_path = Resource::path($this->uri); // this is a request for a resource.
-            $this->content_type = 'resource';
-        }
-        else
+        $this->item = Item::factory($this->uri);
+        
+        if ( ! $this->item )
         {
             // can't find anything, throw a 404 error.
-            throw new Exception('404');
+            throw new Exception('404');            
         }
     }
 
     protected function get_template()
     {
-        if ( isset($this->content['template']) && file_exists( TEMPLATESPATH.$this->content['template'] ) )
-        {
-            $this->template_path = $this->content['template'];
-        }
-        else
+        $this->template_path = $this->item->template_path();
+        
+        if ( ! $this->template_path )
         {
             throw new Exception('404'); // TODO: handle this more gracefully with fallback templates
         }
     }
     
-    protected function parse_content()
+    protected function get_content()
     {
-        if ( $this->content_path )
-        {
-            $this->content = Content::parse($this->content_path);
-            if ( $this->cache ) Cache::save($this->uri, 'content', $this->content);            
-        }
+        $this->content = $this->item->content( $this->cache );
+        if ( $this->cache ) Cache::save($this->uri, 'content', $this->content);            
     }
     
     protected function parse_globals()
     {
         if ( file_exists(GLOBALSPATH) )
         {
-            $this->globals = Content::parse(GLOBALSPATH);
+            $this->globals = Helpers::parse_contents(GLOBALSPATH);
             if ( $this->cache ) Cache::save('_globals', 'content', $this->globals);
         }
     }
     
     protected function render_template()
     {
-        $template = Template::factory();
-        $this->response = $template->render($this->template_path, array_merge($this->content,array('global'=>$this->globals,'pip'=>new TemplateData())));
-        if ( $this->cache ) Cache::save($this->uri, 'site', $this->response);
+        try
+        {
+            $template = $this->item->template();
+            
+            $this->response = $template->render(array_merge($this->content,array('global'=>$this->globals,'pip'=>new TemplateData())));
+            
+            if ( $this->cache ) Cache::save($this->uri, 'site', $this->response);
+        }
+        catch ( Exception $e )
+        {
+            $this->show_404();
+        }
     }
         
     private function show_404()
@@ -123,17 +119,20 @@ abstract class Request {
         // if there is a 404 content page, display that. 404 pages are not cached.
         $uri = new URI('404');
 
-        if ( Page::path($uri) )
+        if ( Item_Page::path($uri) )
         {
             try
             {
-                $content = Content::parse( Page::path($uri) );
-                if ( isset($content['template']) && file_exists( TEMPLATESPATH.$content['template'] ) )
-                {
-                    $template = Template::factory();
-                    echo $template->render($content['template'], array_merge($content,array('global'=>$this->globals)));
-                    exit();
-                }
+                $item = new Item_Page($uri);
+                
+                $content = $item->content( $this->cache );
+                
+                $template = $item->template();
+
+                echo $template->render(array_merge($content,array('global'=>$this->globals,'pip'=>new TemplateData())));
+                
+                exit();
+     
             }
             catch( Exception $e )
             {

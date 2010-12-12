@@ -7,6 +7,8 @@ class Template {
 	private static $loader;
 	
 	private $twig;
+	
+	private $template;
 
 	public static function factory()
 	{
@@ -32,10 +34,18 @@ class Template {
         ));
     }
     
-    public function render( $template_path, $content )
+    public function set_path( $template_path )
     {
-        $template = $this->twig->loadTemplate($template_path);
-        return $template->render($content);
+        $this->template = $this->twig->loadTemplate($template_path);
+    }
+    
+    public function render( $content )
+    {
+        if ( $this->template )
+        {
+            return $this->template->render($content);
+        }
+        throw new Exception('Template path has not been set');
     }
 
 }

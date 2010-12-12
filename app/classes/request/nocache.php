@@ -10,14 +10,12 @@ class Request_NoCache extends Request {
    
     protected function render()
     {
-       $this->get_content_path();
-       
-       $this->parse_content();
+       $this->get_item();
 
-       $this->get_template();
+       $this->get_content();
        
        $this->parse_globals();
-           
+       
        $this->render_template();
     }
     
