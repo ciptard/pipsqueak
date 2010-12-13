@@ -34,8 +34,15 @@ class Template {
         ));
     }
     
-    public function set_path( $template_path )
+    public function set_path( $template_path, $format = 'html' )
     {
+        $parts = preg_split("/\\.([^.\\s]{2,4}$)/", $template_path, NULL, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+        
+        if ( count($parts) < 2 )
+        {
+            $template_path = $template_path.'.'.$format;
+        }
+        
         $this->template = $this->twig->loadTemplate($template_path);
     }
     

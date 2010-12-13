@@ -53,10 +53,28 @@ class Cache {
         return FALSE;
     }
     
+    public static function get_etag( $path )
+    {
+        return sprintf('"%x-%x-%s"', fileinode($path), filesize($path),base_convert(str_pad(filemtime($path),16,"0"),10,16));
+    }
+    
     private static function cache_path( $uri, $type )
     {
-        if ( is_object($uri) ) $uri = $uri->string();
-        $path = empty($uri) ? 'home' : $uri;
+        if ( is_object($uri) )
+        {
+            $uri_string = $uri->string();
+            $format = '.'.$uri->format();
+        }
+        else
+        {
+            $uri_string = $uri;
+            $format = '';
+        }
+        
+        $path = empty($uri_string) ? 'home' : $uri_string;
+        
+        $path = $path.$format;
+        
         return CACHEPATH.$type.DS.$path.'.cache';
     }
 }

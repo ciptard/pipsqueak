@@ -5,8 +5,8 @@ class Request_Dynamic extends Request {
     protected function render()
     {
         $this->get_item();
-        
-        $content_cache_is_valid  = Cache::is_valid($this->uri, 'content', $this->content_path);
+            
+        $content_cache_is_valid  = Cache::is_valid($this->uri, 'content', $this->item->get_path());
         $template_cache_is_valid = Cache::is_valid($this->uri, 'site', TEMPLATESPATH);
         $globals_cache_is_valid  = Cache::is_valid('_globals','content', GLOBALSPATH);
 
@@ -18,6 +18,9 @@ class Request_Dynamic extends Request {
             // if all checks are ok, serve up the cached version.
             // note *any* change to the templates means we don't serve up the cached content
             // as we can't follow the template include/embed paths.
+            
+            if ( $this->check_etag() ) return;
+            
             $this->response = Cache::retrieve($this->uri);
             return;
         }

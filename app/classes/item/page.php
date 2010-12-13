@@ -2,7 +2,7 @@
 
 
 class Item_Page extends Item {
-        
+            
     public static function path( $uri )
     {
         $hashkey = md5($uri->string());

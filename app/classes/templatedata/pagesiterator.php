@@ -18,18 +18,17 @@ class TemplateData_PagesIterator extends TemplateData_DataIterator {
              {
                  $path = preg_replace('/\d+?\-/','',str_replace(PAGESPATH, '', $file->getPathname()));
                  $segments = explode( DS, $path );
-
+                                                  
                  $current = array(
                      'slug'      => end($segments),
-                     'level'     => count($segments),
-                     'path'     => $path
-                 );
+                     'level'     => count($segments)
+                 );                 
 
                  $children = $this->arrayize($iterator->getChildren());
-
+            
                  if ( count($children) ) $current['children'] = $children;
-
-                 $array[$path] = $current;
+                 
+                 $array[$path] = new Templatedata_Item( 'page', $path, $current );
              }
          }
 

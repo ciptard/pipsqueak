@@ -6,8 +6,6 @@ abstract class Request {
         
     public $response;
     
-    public $content_path;
-    
     public $content_type;
     
     public $content = array();
@@ -55,6 +53,39 @@ abstract class Request {
     
     public function response()
     {
+        switch( $this->uri->format() )
+        {
+            case 'rss':
+                header("Content-type: application/rss+xml; charset=utf-8");
+            break;
+            case 'xml':
+                header("Content-type: text/xml; charset=utf-8");
+            break;
+            case 'json':
+                header('Content-type: application/json; charset=utf-8');
+            break;            
+            case 'txt':
+                header("Content-type: text/plain; charset=utf-8");
+            break;
+            case 'atom':
+                header("Content-type: application/atom+xml; charset=utf-8");
+            break;
+            case 'rdf':
+                header("Content-type: application/rdf+xml; charset=utf-8");
+            break;
+            case 'css':
+                header('Content-type: text/css; charset=utf-8');
+            break;
+            case 'js':
+                header('Content-type: text/javascript; charset=utf-8');
+            break;
+            default:
+                header("Content-type: text/html; charset=utf-8");
+            break;
+        }
+        
+        if ( $this->cache ) header("Etag: ".Cache::get_etag($this->item->get_path()));
+        
         echo $this->response;
     }
     
@@ -110,6 +141,17 @@ abstract class Request {
         {
             $this->show_404();
         }
+    }
+    
+    protected function check_etag()
+    {
+        if ( isset($_SERVER['HTTP_IF_NONE_MATCH']) and stripslashes($_SERVER['HTTP_IF_NONE_MATCH']) == Cache::get_etag($this->item->get_path()))
+        {
+            header("HTTP/1.0 304 Not Modified");
+            header('Content-Length: 0');
+            return TRUE;
+        }
+        return FALSE;
     }
         
     private function show_404()

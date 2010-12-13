@@ -36,9 +36,8 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
             foreach( $segments as $segment )
             {
                 $path = trim($path.'/'.$segment,'/');
-                $result = $result[$path]['children'];
+                $result = $result[$path]->children;
             }
-        
         }
         
         $self = get_class($this);

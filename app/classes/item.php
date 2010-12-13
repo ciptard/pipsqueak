@@ -11,6 +11,8 @@ class Item {
     
     protected $path;
     
+    protected $uri;
+    
     public static function factory( $uri )
     {
         if ( Item_Page::path($uri) )
@@ -33,6 +35,11 @@ class Item {
         $this->path = $self::path($uri);
         $this->uri = $uri;
     }
+    
+    public function get_path()
+    {
+        return $this->path;
+    }
         
     public function template()
     {
@@ -43,10 +50,11 @@ class Item {
         
         if ( $this->content === NULL ) $this->content();
         
-        if ( isset($this->content['template']) && file_exists( TEMPLATESPATH.$this->content['template'] ) )
+        if ( isset($this->content['template']) )
         {
             $this->template = Template::factory();
-            $this->template->set_path($this->content['template']);
+            $this->template->set_path($this->content['template'], $this->uri->format());                
+            
             return $this->template;
         }
         
@@ -55,7 +63,7 @@ class Item {
     
     public function content( $use_cached = TRUE )
     {
-        if ( ! $this->content )
+        if ( $this->content === NULL )
         {
             if ( $use_cached and Cache::is_valid($this->uri, 'content', $this->path) )
             {

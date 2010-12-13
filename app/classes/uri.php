@@ -15,21 +15,32 @@ class URI {
 			$uri = $this->detect();
 		}
 		
-		$this->uri = trim($uri, '/');
+		$uri = trim($uri, '/');
 
+		$parts = preg_split("/\\.([^.\\s]{2,4}$)/", $uri, NULL, PREG_SPLIT_NO_EMPTY|PREG_SPLIT_DELIM_CAPTURE);
+        
+        $this->uri = count($parts) ? $parts[0] : $uri;
+        
+        $this->format = count($parts) === 2 ? $parts[1] : 'html';
+   
         if ( empty($this->uri) )
         {
             $this->segments = array();  
         }
         else
         {
-            $this->segments = explode('/', $this->uri);            
+            $this->segments = explode('/', $this->uri);
         }
 	}
 	
 	public function segments()
 	{
 	    return $this->segments;
+	}
+	
+	public function format()
+	{
+	    return $this->format;
 	}
 	
 	public function last_segment()

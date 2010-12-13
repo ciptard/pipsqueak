@@ -7,6 +7,8 @@ class Request_Cached extends Request {
         // grab page cache if it exists
         if ( Cache::exists($this->uri, 'site') )
         {
+            if ( $this->check_etag() ) return;
+            
             $this->response = Cache::retrieve($this->uri);
             return;
         }

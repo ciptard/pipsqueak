@@ -4,7 +4,7 @@ return array(
         
     'charset'               => 'utf-8',
     'debug'                 => FALSE,
-    'cache_level'           => Cache::NONE,
+    'cache_level'           => Cache::DYNAMIC,
     
     'index_file'            => 'index.php',
     

@@ -32,6 +32,8 @@ class Helpers {
     
     public static function parse_contents( $path )
     {
+        if ( ! file_exists( $path ) ) return array();
+        
         $yml = file_get_contents($path);
         
         $sections = preg_split("/(\+{3,}[\s]{0,}\r?\n)/", $yml);
