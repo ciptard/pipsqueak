@@ -8,7 +8,7 @@ $app_path = './app';
 /**
 * Path to the cache directory.
 */
-$cache_path = $app_path.'/cache';
+$cache_path = './cache';
 
 /**
 * Path to the templates directory.
