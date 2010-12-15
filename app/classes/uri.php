@@ -33,6 +33,18 @@ class URI {
         }
 	}
 	
+	public function __get($name)
+	{
+	    $num = str_replace('segment_', '', $name) - 1;
+	    return array_key_exists( $num, $this->segments ) ? $this->segments[$num] : NULL;
+	}
+	
+    public function __isset( $name )
+    {
+        $num = str_replace('segment_', '', $name) - 1;
+	    return array_key_exists( $num, $this->segments ) ? TRUE : FALSE;
+    }
+	
 	public function segments()
 	{
 	    return $this->segments;
@@ -60,7 +72,7 @@ class URI {
 	    return $this->uri;
 	}
 	
-	public function detect()
+	protected function detect()
 	{
 	    $index_file = Config::get('index_file');
 	    

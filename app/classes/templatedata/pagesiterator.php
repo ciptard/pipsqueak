@@ -2,6 +2,35 @@
 
 class TemplateData_PagesIterator extends TemplateData_DataIterator {
     
+    public function under($path = NULL)
+    {
+        if ( $this->data === NULL ) $this->data = $this->get_data();
+
+        if ( ! $path )
+        {
+            return $this;
+        }
+        else
+        {
+            $segments = explode('/',$path);
+            $path = '';
+            $result = $this->data;
+            
+            foreach( $segments as $segment )
+            {
+                $path = trim($path.'/'.$segment,'/'); 
+                $result = count($result[$path]->children) ? $result[$path]->children : array();
+            }
+        }
+       
+        if ( count($result) )
+        {
+            $self = get_class($this);
+            return new $self($result);            
+        }
+        return array();
+    }
+    
     protected function get_data()
     {   
         $iterator = new RecursiveDirectoryIterator(PAGESPATH);
@@ -21,12 +50,12 @@ class TemplateData_PagesIterator extends TemplateData_DataIterator {
                                                   
                  $current = array(
                      'slug'      => end($segments),
-                     'level'     => count($segments)
+                     'level'     => count($segments),
                  );                 
 
                  $children = $this->arrayize($iterator->getChildren());
             
-                 if ( count($children) ) $current['children'] = $children;
+                 $current['children'] = count($children) ? $children : array();
                  
                  $array[$path] = new Templatedata_Item( 'page', $path, $current );
              }

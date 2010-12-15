@@ -5,6 +5,8 @@ class TemplateData_Item {
     protected $resource_item = NULL;
     
     protected $data;
+    
+    protected $uri;
         
     function __construct( $type, $path, $data = array() )
     {
@@ -12,7 +14,7 @@ class TemplateData_Item {
         $this->path = $path == Config::get('homepage_slug') ? '' : $path;
         $this->uri = new URI($path);
         $this->data = $data;
-
+       
         $this->url = empty( $this->path ) ? '/' : str_replace('//','/','/'.Config::get('index_file').'/'.$this->path);
     }
     

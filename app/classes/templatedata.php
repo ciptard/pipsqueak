@@ -6,6 +6,13 @@ class TemplateData {
     
     protected static $resources = array();
     
+    public $uri;
+    
+    public function __construct()
+    {
+        $this->uri = new URI();
+    }
+    
     public function pages()
     {
         if ( ! self::$pages ) 
@@ -23,12 +30,6 @@ class TemplateData {
             if ( is_dir( RESOURCESPATH.$name ) )
             {
                 $this->resources[$name] = new TemplateData_ResourcesIterator(RESOURCESPATH.$name);
-                foreach( $this->resources[$name] as $res )
-                {
-                    echo "<pre>";
-                    print_r($res);
-                    echo "</pre>";
-                }
             }
         }
         if ( isset($this->resources[$name] ) )

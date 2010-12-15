@@ -18,32 +18,7 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
     {
         if ( $data ) $this->data = $data;
     }
-    
-    public function under($path = NULL)
-    {
-        if ( $this->data === NULL ) $this->data = $this->get_data();
-
-        if ( ! $path )
-        {
-            return $this;
-        }
-        else
-        {
-            $segments = explode('/',$path);
-            $path = '';
-            $result = $this->data;
-            
-            foreach( $segments as $segment )
-            {
-                $path = trim($path.'/'.$segment,'/');
-                $result = $result[$path]->children;
-            }
-        }
         
-        $self = get_class($this);
-        return new $self($result);
-    }
-    
     public function next()
     {
         if ( $this->data === NULL ) $this->data = $this->get_data();

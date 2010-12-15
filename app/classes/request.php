@@ -133,7 +133,11 @@ abstract class Request {
         {
             $template = $this->item->template();
             
-            $this->response = $template->render(array_merge($this->content,array('global'=>$this->globals,'pip'=>new TemplateData())));
+            $this->response = $template->render(array_merge($this->content,
+                                    array(
+                                        'global'=>$this->globals,
+                                        'pip'=>new TemplateData()
+                                    )));
             
             if ( $this->cache ) Cache::save($this->uri, 'site', $this->response);
         }
