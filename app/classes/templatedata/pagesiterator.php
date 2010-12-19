@@ -45,7 +45,7 @@ class TemplateData_PagesIterator extends TemplateData_DataIterator {
          {
              if ( $file->isDir() )
              {
-                 $path = preg_replace('/\d+?\-/','',str_replace(PAGESPATH, '', $file->getPathname()));
+                 $path = preg_replace('/\d+?\./','',str_replace(PAGESPATH, '', $file->getPathname()));
                  $segments = explode( DS, $path );
                                                   
                  $current = array(

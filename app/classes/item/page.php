@@ -33,7 +33,7 @@ class Item_Page extends Item {
 
         foreach ( $segments as $segment )
         {
-            $path .= '[1-9]*-'.$segment.DS;
+            $path .= '[1-9]*.'.$segment.DS;
         }
         
         $page_name = $uri->last_segment() ? $uri->last_segment() : Config::get('homepage_slug');
