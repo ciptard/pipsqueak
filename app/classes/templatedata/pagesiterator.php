@@ -43,7 +43,7 @@ class TemplateData_PagesIterator extends TemplateData_DataIterator {
 
          foreach ( $iterator as $file )
          {
-             if ( $file->isDir() )
+             if ( $file->isDir() and $file->getFilename() !== '404' )
              {
                  $path = preg_replace('/\d+?\./','',str_replace(PAGESPATH, '', $file->getPathname()));
                  $segments = explode( DS, $path );
