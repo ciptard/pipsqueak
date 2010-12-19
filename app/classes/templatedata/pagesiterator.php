@@ -2,33 +2,23 @@
 
 class TemplateData_PagesIterator extends TemplateData_DataIterator {
     
-    public function under($path = NULL)
+    protected function filter_under( $data, $path )
     {
-        if ( $this->data === NULL ) $this->data = $this->get_data();
-
-        if ( ! $path )
-        {
-            return $this;
-        }
-        else
-        {
+        if ( $path )
+        {            
             $segments = explode('/',$path);
             $path = '';
-            $result = $this->data;
+            $result = $data;
             
             foreach( $segments as $segment )
             {
                 $path = trim($path.'/'.$segment,'/'); 
                 $result = count($result[$path]->children) ? $result[$path]->children : array();
             }
+            
+            return $result;
         }
-       
-        if ( count($result) )
-        {
-            $self = get_class($this);
-            return new $self($result);            
-        }
-        return array();
+        return $data;
     }
     
     protected function get_data()

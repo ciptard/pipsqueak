@@ -4,7 +4,7 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
     
     protected $data = NULL;
     
-    protected $filter;
+    protected $filters = array();
     
     protected $key;
     protected $valid;
@@ -50,6 +50,7 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
     
     public function count()
     {
+        if ( $this->data === NULL ) $this->data = $this->get_data();
         return count($this->data);
     }
     
@@ -63,12 +64,77 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
         $self = get_class($this);
         return new $self($this->current['children']);
     }
-            
+    
     public function __toString()
     {
         return '';
     }
-       
+    
+    
+    // filters
+    
+    protected function filter( $data )
+    {
+        $self = get_class($this);
+        
+        if ( count($this->filters) )
+        {
+            foreach ( $this->filters as $filter )
+            {        
+                $data = call_user_func_array(array($this, 'filter_'.$filter['name']), array_merge( array($data), $filter['args'] ) );
+            }
+        }
+
+        return $data;
+    }
+    
+    public function under($path = NULL)
+    {
+        $this->filters[] = array('name'=>'under','args'=>array($path));
+        return $this;
+    }
+    
+    public function limit( $limit )
+    {
+        $this->filters[] = array('name'=>'limit','args'=>array($limit));
+        return $this;
+    }
+    
+    public function start( $start )
+    {
+        $this->filters[] = array('name'=>'start','args'=>array($start));
+        return $this;
+    }
+    
+    public function to( $limit )
+    {
+        $this->filters[] = array('name'=>'limit','args'=>array($limit));
+        return $this;
+    }
+    
+    public function from( $start )
+    {
+        $this->filters[] = array('name'=>'start','args'=>array($start));
+        return $this;
+    }
+    
+    // these should be overridden in child classes to supply a specific implementation
+    
+    protected function filter_under( $data, $path )
+    {
+        return $data;
+    }
+    
+    protected function filter_limit( $data, $limit )
+    {
+        return array_slice($data, 0, $limit);
+    }
+    
+    protected function filter_start( $data, $start )
+    {
+        return array_slice($data, $start);
+    }
+            
 }
 
 /* End of file classes/data.php */

@@ -1,54 +1,43 @@
 <?php defined('APPPATH') or exit('No direct script access allowed');
 
 class TemplateData_ResourcesIterator extends TemplateData_DataIterator {
-    
-    public function under($path = NULL)
+        
+    public function __construct($data = NULL)
     {
-        if ( $this->data === NULL ) $this->data = $this->get_data();
-
-        if ( ! $path )
+        if ( $data && is_array($data) )
         {
-            return $this;
+            $this->data = $data;
         }
-        else
+        elseif ( is_string($data) )
         {
+            $this->path = $data;
+        }
+    }
+    
+    protected function filter_under( $data, $path )
+    {
+        if ( $path )
+        {            
             $result = array();
             $path = '/'.trim($path,'/');
             
-            foreach( $this->data as $item_path => $item )
+            foreach( $data as $item_path => $item )
             {
                 if ( strpos( $item_path, $path ) === 0 )
                 {
                     $result[$item_path] = $item;
                 }
             }
+            return $result;
         }
-        
-        if ( count($result) )
-        {
-            $self = get_class($this);
-            return new $self($result);            
-        }
-        return array();
-    }
-    
-    public function __construct($data = NULL)
-    {
-        if ( $data && is_array($data) )
-        {
-            $this->data = $data;   
-        }
-        elseif ( is_string($data) )
-        {
-            $this->path = $data;
-            $this->data = $this->get_data();
-        }
+        return $data;
     }
     
     protected function get_data()
     {   
         $iterator = new RecursiveDirectoryIterator($this->path);
-        return $this->arrayize($iterator);
+        $data = $this->arrayize($iterator);
+        return $this->filter($data);
     }
     
     protected function arrayize(RecursiveDirectoryIterator $iterator)
