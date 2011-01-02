@@ -33,10 +33,17 @@ class TemplateData_ResourcesIterator extends TemplateData_DataIterator {
         return $data;
     }
     
+    protected function filter_sort( $data, $dir )
+    {
+        if ( strtolower($dir) == 'desc' ) ksort($data);
+        return $data;
+    }
+    
     protected function get_data()
     {   
         $iterator = new RecursiveDirectoryIterator($this->path);
         $data = $this->arrayize($iterator);
+        krsort($data);
         return $this->filter($data);
     }
     

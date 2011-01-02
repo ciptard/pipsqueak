@@ -76,11 +76,21 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
     protected function filter( $data )
     {
         $self = get_class($this);
-        
+
         if ( count($this->filters) )
         {
+            foreach ( $this->filters as $key => $filter )
+            {   
+                if ( $filter['name'] == 'sort' )
+                {
+                    $data = call_user_func_array(array($this, 'filter_'.$filter['name']), array_merge( array($data), $filter['args'] ) );
+                    unset($this->filters[$key]);
+                    break;
+                }  
+            }
+            
             foreach ( $this->filters as $filter )
-            {        
+            {
                 $data = call_user_func_array(array($this, 'filter_'.$filter['name']), array_merge( array($data), $filter['args'] ) );
             }
         }
@@ -118,6 +128,12 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
         return $this;
     }
     
+    public function sort( $dir )
+    {
+         $this->filters[] = array('name'=>'sort','args'=>array($dir));
+         return $this;
+    }
+    
     // these should be overridden in child classes to supply a specific implementation
     
     protected function filter_under( $data, $path )
@@ -133,6 +149,11 @@ abstract class TemplateData_DataIterator implements RecursiveIterator, Countable
     protected function filter_start( $data, $start )
     {
         return array_slice($data, $start);
+    }
+    
+    protected function filter_sort( $data, $dir )
+    {
+        return $data;
     }
             
 }
